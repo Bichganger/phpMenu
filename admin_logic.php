@@ -5,28 +5,17 @@ if (!empty($_POST['title']) && !empty($_POST['link'])) {
     $title = $_POST['title'];
     $links = $_POST['link'];
 
-    // Sanitize and create a unique filename
-    $filename = strtolower(str_replace(' ', '_', pathinfo($links, PATHINFO_FILENAME))) . '.php';
-    
-    // Check if file already exists to avoid overwriting
-    if (file_exists($filename)) {
-        echo 'Файл с таким именем уже существует.';
-        exit;
-    }
-
+    $filename = pathinfo($links, PATHINFO_FILENAME);
+    $filename = strtolower(str_replace(' ', '_', $filename)) . '.php';
     $filecontent = "<?php\n
 require_once('link.php');\n
 require_once('header.php');\n
 ?>
-<h1>" . htmlspecialchars($title) . "</h1>
+<h1>" . $title . "</h1>
 <?php
 require_once('footer.php');\n?>";
 
-    if (file_put_contents($filename, $filecontent) === false) {
-        echo 'Ошибка при создании файла.';
-        exit;
-    }
-
+    file_put_contents($filename, $filecontent);
     $stmt = $link->prepare("INSERT INTO `menu` (title, link) VALUES (?, ?)");
     $stmt->bind_param("ss", $title, $filename);
 
@@ -39,40 +28,36 @@ require_once('footer.php');\n?>";
     $stmt->close();
 }
 
-if (isset($_POST['delete_btn']) && isset($_POST['checkboxes'])) {
+if (isset($_POST['delete_btn'])) {
+    print_r ($_POST);
+    echo "123";
     $deleteIds = array_filter($_POST['checkboxes'], function ($value) {
-        return !empty($value);
+        return $value;
     });
 
     if (!empty($deleteIds)) {
-        $deleteIdsStr = implode(',', array_map('intval', array_keys($deleteIds))); // Санитизация ID
+        $deleteIdsStr = implode(',', array_keys($deleteIds));
         $query_select = "SELECT title FROM `menu` WHERE id IN ($deleteIdsStr)";
-        
-        if ($result_select = $link->query($query_select)) {
-            while ($row = $result_select->fetch_assoc()) {
-                $title = $row["title"];
-                $filename = strtolower(str_replace(' ', '_', $title)) . '.php';
+        $result_select = $link->query($query_select);
 
-                if (file_exists($filename)) {
-                    if (!unlink($filename)) {
-                        echo "Ошибка при удалении файла: $filename";
-                    }
-                }
-            }
+        while ($row = $result_select->fetch_assoc()) {
+            $title = $row["title"];
+            $filename = strtolower(str_replace(' ', '_', $title)) . '.php';
 
-            $delete_query = "DELETE FROM `menu` WHERE id IN ($deleteIdsStr)";
-            if ($link->query($delete_query)) {
-                header("Location: admin.php");
-                exit;
-            } else {
-                echo "Ошибка удаления записи: " . $link->error;
+            if (file_exists($filename)) {
+                unlink($filename);
             }
+        }
+
+        $delete_query = "DELETE FROM `menu` WHERE id IN ($deleteIdsStr)";
+        if (mysqli_query($link, $delete_query)) {
+            header("Location: /admin.php");
+            exit;
         } else {
-            echo "Ошибка выполнения запроса: " . $link->error;
+            echo "Ошибка удаления записи: " . mysqli_error($link);
         }
     }
 }
-
 
 if (isset($_POST['saveButton'])) {
     $query_update = "SELECT * FROM `menu`";
@@ -102,7 +87,7 @@ if (isset($_POST['saveButton'])) {
                 $stmt->bind_param("ssi", $title_ins, $link_ins, $id);
 
                 if ($stmt->execute()) {
-                    header("Location: admin.php");
+                    header("Location: /admin.php");
                     exit;
                 } else {
                     echo "Ошибка при обновлении данных: " . $stmt->error;

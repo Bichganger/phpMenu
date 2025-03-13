@@ -75,24 +75,24 @@ require_once('link.php');
                     $link_get = $row['link'];
                     $id = $row["id"];
                 ?>
-                <div class="row mt-2">
-                    <div class="col12">
-                        <label for="title_get<?= $id ?>">Заголовок:</label>
-                    </div>
-                    <div class="col-4">
-                        <input type="text" class="form-control" name="title_get[<?= $id ?>]" id="title_get<?= $id ?>" value="<?= $title_get ?>" onchange="activateButton()">
-                    </div>
+            <div class="row mt-2">
+    <div class="col12">
+        <label for="title_get<?= $id ?>">Заголовок:</label>
+    </div>
+    <div class="col-4">
+        <input type="text" class="form-control" name="title_get[<?= $id ?>]" id="title_get<?= $id ?>" value="<?= $title_get ?>" onchange="activateButton()">
+    </div>
 
-                    <div class="col-1">
-                        <label for="link_get<?= $id ?>">Cсылка:</label>
-                    </div>
-                    <div class="col-4">
-                        <input type="text" class="form-control" name="link_get[<?= $id ?>]" id="link_get<?= $id ?>" value="<?= $link_get ?>" onchange="activateButton()">
-                    </div>
-                    <div class="col-1">
-                        <input type="checkbox" name="checkboxes<?= $id ?>" id="checkboxes[<?= $id ?>]" class="del">
-                    </div>
-                </div>
+    <div class="col-1">
+        <label for="link_get<?= $id ?>">Cсылка:</label>
+    </div>
+    <div class="col-4">
+        <input type="text" class="form-control" name="link_get[<?= $id ?>]" id="link_get<?= $id ?>" value="<?= $link_get ?>" onchange="activateButton()">
+    </div>
+    <div class="col-1">
+        <input type="checkbox" name="checkboxes[<?= $id ?>]" id="checkboxes[<?= $id ?>]" class="del">
+    </div>
+</div>
                 <?php
                 }
                 $link->close();
