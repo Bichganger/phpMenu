@@ -102,7 +102,7 @@ require_once('link.php');
                         <input type="submit" name="saveButton" value="Сохранить" disabled="disabled" id="saveButton">
                     </div>
                     <div class="col-2">
-                    <input type="submit" name="detele_btn" value="Удалить">
+                    <input type="submit" name="delete_btn" value="Удалить">
                     </div>
                 </div>
             </form>
