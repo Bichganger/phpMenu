@@ -59,7 +59,7 @@ require_once('link.php');
     <div class="container">
         <div class="row">
             <div class="col12">
-                <h3>Редактировать пункт меню</h3>
+                <h3 class="text-danger">Редактировать пункт меню</h3>
             </div>
         </div>
     </div>
@@ -76,7 +76,8 @@ require_once('link.php');
                     $id = $row["id"];
                 ?>
             <div class="row mt-2">
-    <div class="col12">
+                <div class="row mt-2 main">
+    <div class="col-1">
         <label for="title_get<?= $id ?>">Заголовок:</label>
     </div>
     <div class="col-4">
@@ -93,7 +94,8 @@ require_once('link.php');
         <input type="checkbox" name="checkboxes[<?= $id ?>]" id="checkboxes[<?= $id ?>]" class="del">
     </div>
 </div>
-                <?php
+</div>              
+  <?php
                 }
                 $link->close();
                 ?>
