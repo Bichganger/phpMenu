@@ -57,58 +57,70 @@ require_once('link.php');
         </form>
     </div>
     <div class="container">
-        <div class="row">
-            <div class="col12">
-                <h3 class="text-danger">Редактировать пункт меню</h3>
-            </div>
+    <div class="row">
+        <div class="col12">
+            <h3 class="text-danger">Редактировать пункт меню</h3>
         </div>
-    </div>
-    <div class="container">
-        <form action="admin_logic.php" method="POST">
-            <?php
-                require_once('link.php');
-                $query_get = "SELECT * FROM menu";
-                $result_get = $link->query($query_get);
-
-                while($row = $result_get->fetch_assoc()){
-                    $title_get = $row['title'];
-                    $link_get = $row['link'];
-                    $id = $row["id"];
-                ?>
-            <div class="row mt-2">
-                <div class="row mt-2 main">
-    <div class="col-1">
-        <label for="title_get<?= $id ?>">Заголовок:</label>
-    </div>
-    <div class="col-4">
-        <input type="text" class="form-control" name="title_get[<?= $id ?>]" id="title_get<?= $id ?>" value="<?= $title_get ?>" onchange="activateButton()">
-    </div>
-
-    <div class="col-1">
-        <label for="link_get<?= $id ?>">Cсылка:</label>
-    </div>
-    <div class="col-4">
-        <input type="text" class="form-control" name="link_get[<?= $id ?>]" id="link_get<?= $id ?>" value="<?= $link_get ?>" onchange="activateButton()">
-    </div>
-    <div class="col-1">
-        <input type="checkbox" name="checkboxes[<?= $id ?>]" id="checkboxes[<?= $id ?>]" class="del">
     </div>
 </div>
-</div>              
-  <?php
-                }
-                $link->close();
+<div class="container">
+    <form action="admin_logic.php" method="POST">
+        <div id="menu-items">
+            <?php
+            require_once('link.php');
+            $query_get = "SELECT * FROM menu ORDER BY sortOrder ASC";
+            $result_get = $link->query($query_get);
+
+            $menuItems = []; // Store menu items to be reordered in JavaScript
+
+            while ($row = $result_get->fetch_assoc()) {
+                $menuItems[] = $row;
+                $title_get = $row['title'];
+                $link_get = $row['link'];
+                $id = $row["id"];
                 ?>
-                <div class="row mt-2 justify-content-between">
-                    <div class="col-2">
-                        <input type="submit" name="saveButton" value="Сохранить" disabled="disabled" id="saveButton">
-                    </div>
-                    <div class="col-2">
-                    <input type="submit" name="delete_btn" value="Удалить">
+                <div class="row mt-2 menu-item" data-id="<?= $id ?>" draggable="true">
+                    <div class="row mt-2 main">
+                        <div class="col-1 drag-handle" style="cursor: grab;">
+                            <i class="fas fa-arrows-alt"></i>
+                        </div>
+                        <div class="col-1">
+                            <label for="title_get<?= $id ?>">Заголовок:</label>
+                        </div>
+                        <div class="col-4">
+                            <input type="text" class="form-control" name="title_get[<?= $id ?>]"
+                                   id="title_get<?= $id ?>" value="<?= $title_get ?>" onchange="activateButton()">
+                        </div>
+
+                        <div class="col-1">
+                            <label for="link_get<?= $id ?>">Ссылка:</label>
+                        </div>
+                        <div class="col-4">
+                            <input type="text" class="form-control" name="link_get[<?= $id ?>]"
+                                   id="link_get<?= $id ?>" value="<?= $link_get ?>" onchange="activateButton()">
+                        </div>
+                        <div class="col-1">
+                            <input type="checkbox" name="checkboxes[<?= $id ?>]" id="checkboxes[<?= $id ?>]"
+                                   class="del">
+                        </div>
                     </div>
                 </div>
-            </form>
+                <?php
+            }
+            $link->close();
+            ?>
         </div>
+        <input type="hidden" name="reordered_ids" id="reordered_ids" value="">
+        <div class="row mt-2 justify-content-between">
+            <div class="col-2">
+                <input type="submit" name="saveButton" value="Сохранить" disabled="disabled" id="saveButton">
+            </div>
+            <div class="col-2">
+                <input type="submit" name="delete_btn" value="Удалить">
+            </div>
+        </div>
+    </form>
+</div>
         <script>
             function activateButton(){
                 document.getElementById('saveButton').disabled = false;
