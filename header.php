@@ -12,84 +12,84 @@ require_once('link.php');
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-  <?php 
-  if(!empty($_REQUEST['login'])){
-    $login = $_REQUEST['login'];
-    $pass = $_REQUEST['password'];
-    $query = "SELECT * FROM users";
-    $result = $link->query($query);
-    if($result->num_rows > 0){
-        $row = $result->fetch_assoc();
-        if($login === $row['login'] && $pass === $row['password']){?>
-  
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Панель навигации</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Переключатель навигации">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <?php
+    <?php
+    if (!empty($_REQUEST['login'])) {
+        $login = $_REQUEST['login'];
+        $pass = $_REQUEST['password'];
+        $query = "SELECT * FROM users";
+        $result = $link->query($query);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if ($login === $row['login'] && $pass === $row['password']) { ?>
 
-$query = "SELECT * FROM menu";
-$result = $link->query($query);
-if($result->num_rows > 0){
-    echo '<ul class="navbar-nav">';
-    while($row = $result->fetch_assoc()){
-        echo '<li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="'. $row['link'] .'">' . $row['title'] . '</a>
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="#">Панель навигации</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Переключатель навигации">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                            <?php
+
+                            $query = "SELECT * FROM menu ";
+                            $result = $link->query($query);
+                            if ($result->num_rows > 0) {
+                                echo '<ul class="navbar-nav">';
+                                while ($row = $result->fetch_assoc()) {
+                                    echo '<li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="' . $row['link'] . '">' . $row['title'] . '</a>
             </li>';
-    }
-}
-$link->close();
+                                }
+                            }
+                            $link->close();
 
-?>
-              <li class="nav-link mx-3">
-                        <a class="nav-link" id="register" href="admin.php">Админ Панель</a>
-                    </li>
-                    <li class="nav-link">
-                        <a class="nav-link" id="login"  href="index.php">Выйти</a> <!-- Updated this line -->
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-<?php 
+                            ?>
+                            <li class="nav-link mx-3">
+                                <a class="nav-link" id="register" href="admin.php">Админ Панель</a>
+                            </li>
+                            <li class="nav-link">
+                                <a class="nav-link" id="login" href="index.php">Выйти</a> <!-- Updated this line -->
+                            </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+        <?php
+            }
         }
-      }
     }
-    if(empty($_REQUEST)){?>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Панель навигации</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Переключатель навигации">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <?php 
-              $query = "SELECT * FROM menu";
-              $result = $link->query($query);
-              if($result->num_rows > 0){
-                  echo '<ul class="navbar-nav">';
-                  while($row = $result->fetch_assoc()){
-                      echo '<li class="nav-item">
-                          <a class="nav-link active" aria-current="page" href="'. $row['link'] .'">' . $row['title'] . '</a>
+    if (empty($_REQUEST)) { ?>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Панель навигации</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Переключатель навигации">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <?php
+                    $query = "SELECT * FROM menu ORDER BY sort_order ASC";
+                    $result = $link->query($query);
+                    if ($result->num_rows > 0) {
+                        echo '<ul class="navbar-nav">';
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<li class="nav-item">
+                          <a class="nav-link active" aria-current="page" href="' . $row['link'] . '">' . $row['title'] . '</a>
                           </li>';
-                  }
-              }
-              $link->close();
-              
-              ?>
+                        }
+                    }
+                    $link->close();
+
+                    ?>
                     <li class="nav-link">
                         <a class="nav-link" id="login" data-bs-toggle="modal" data-bs-target="#modal" href="#">Войти</a> <!-- Updated this line -->
                     </li>
-                </ul>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>   
-  <?php 
+        </nav>
+    <?php
     }
-  ?>
+    ?>
 
     <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -102,7 +102,7 @@ $link->close();
                     <form action="" method="POST">
                         <div class="mb-3">
                             <label for="login" class="form-label">Логин</label>
- <input type="text" class="form-control" id="login" name="login" required>
+                            <input type="text" class="form-control" id="login" name="login" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Пароль</label>
@@ -118,10 +118,10 @@ $link->close();
         </div>
     </div>
 
-<?php 
+    <?php
 
 
-?>
+    ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
 </body>
