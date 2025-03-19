@@ -52,7 +52,7 @@ require_once('link.php');
                     <input type="text" class="form-control" name="link" id="link" required>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary" value="Создать пункт меню">Создать пункт меню</button>
+            <button name="addButton" type="submit" class="btn btn-primary" value="Создать пункт меню">Создать пункт меню</button>
     </div>
     </form>
     </div>
@@ -116,7 +116,7 @@ require_once('link.php');
                     <input type="submit" name="saveButton" value="Сохранить" disabled="disabled" id="saveButton">
                 </div>
                 <div class="col-2">
-                    <input type="submit" name="delete" value="Удалить">
+                    <input type="submit" name="deleteButton" value="Удалить">
                 </div>
             </div>
         </form>
