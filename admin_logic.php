@@ -1,16 +1,11 @@
-<?php 
+<?php
 require_once('link.php');
 if (!empty($_POST['title']) && !empty($_POST['link'])) {
     $title = $_POST['title'];
     $links = $_POST['link'];
-
-    // Sanitize the inputs
     $title = htmlspecialchars(trim($title));
     $links = htmlspecialchars(trim($links));
-
-    // Create a valid filename (and sanitize further)
     $filename = strtolower(str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9\s]/', '', pathinfo($links, PATHINFO_FILENAME)))) . '.php';
-
     $filecontent = "<?php\n
                         require_once('link.php');\n
                         require_once('header.php');\n
@@ -18,38 +13,29 @@ if (!empty($_POST['title']) && !empty($_POST['link'])) {
                     <h1>" . $title . "</h1>
                     <?php
                     require_once('footer.php');\n?>";
-
-    // Create the file
     if (file_put_contents($filename, $filecontent) !== false) {
-        // Prepare the SQL statement
-        $stmt = $linkBase->prepare("INSERT INTO menu (title, link, sort_order) 
-SELECT ?, ?, (SELECT MAX(sort_order) + 1 FROM menu)");
-
-
-
-        // Check if prepare was successful
+        $stmt = $linkBase->prepare("INSERT INTO menu (title, link, sort_order) SELECT ?, ?, (SELECT MAX(sort_order) + 1 FROM menu)");
         if ($stmt === false) {
-            echo "Error preparing statement: " . $link->error(); // Use link_get->error
+            echo "Error preparing statement: " . $link->error();
         } else {
-            // Bind the parameters
-            $stmt->bind_param("ss", $title, $filename); // Use $filename and bind the third parameter
 
-            // Execute the statement
+            $stmt->bind_param("ss", $title, $filename);
+
+
             if ($stmt->execute()) {
                 header("Location: admin.php");
                 exit;
             } else {
-                echo 'Error adding menu item: ' . $stmt->error; // Use $stmt->error
+                echo 'Error adding menu item: ' . $stmt->error;
             }
 
-            // Close the statement
+
             $stmt->close();
         }
     } else {
-        echo "Error creating file: " . error_get_last()['message']; // Print file creation error
+        echo "Error creating file: " . error_get_last()['message'];
     }
 }
-
 if (isset($_POST['reordered_ids'])) {
     $ids = explode(",", $_POST['reordered_ids']);
     foreach ($ids as $i => $id) {
@@ -65,11 +51,6 @@ if (isset($_POST['reordered_ids'])) {
     header("Location: /admin.php");
     exit;
 }
-
-
-
-
-
 if (isset($_POST['saveButton'])) {
     foreach ($_POST['title_get'] as $id => $title) {
         $link_get = $_POST['link_get'][$id];
@@ -86,35 +67,34 @@ if (isset($_POST['saveButton'])) {
     header("Location: /admin.php");
     exit;
 }
+if (isset($_POST['delete']) && !empty($_POST['checkboxes'])) {
+    $deleteIds = array_filter($_POST['checkboxes'], function ($value) {
+        return !empty($value);
+    });
 
+    if (!empty($deleteIds)) {
+        $deleteIdsStr = implode(',', array_map('intval', array_keys($deleteIds))); // Санитизация ID
+        $query_select = "SELECT title FROM menu WHERE id IN ($deleteIdsStr)";
 
-
-    if (isset($_POST['delete_btn'])) {
-        $deleteIds = array_filter($_POST['checkboxes'], function ($value) {
-            return $value;
-        });
-    
-        if (!empty($deleteIds)) {
-            $deleteIdsStr = implode(',', array_keys($deleteIds));
-    
-            $query_select = "SELECT `title` FROM `menu` WHERE `id` IN ($deleteIdsStr)";
-            $result_select = $linkBase->query($query_select);
-    
+        if ($result_select = $linkBase->query($query_select)) {
             while ($row = $result_select->fetch_assoc()) {
-                $title = $row['title'];
+                $title = htmlspecialchars(trim($row["title"])); // Санитизация
                 $filename = strtolower(str_replace(' ', '_', $title)) . '.php';
-    
-                if (file_exists($filename)) {
-                    unlink($filename);
+
+                if (file_exists($filename) && !unlink($filename)) {
+                    echo "Ошибка при удалении файла: $filename";
                 }
             }
-            $delete_query = "DELETE FROM `menu` WHERE `id` IN ($deleteIdsStr)";
-            if (mysqli_query($linkBase, $delete_query)) {
+
+            $delete_query = "DELETE FROM menu WHERE id IN ($deleteIdsStr)";
+            if ($linkBase->query($delete_query)) {
                 header("Location: /admin.php");
+                exit;
             } else {
-                echo "ТИ СНОВА ОСИБСЯ КОГДА УДЯЛЯЛЬ ЗЯПИСЬ: " . mysqli_error($linkBase);
+                echo "Ошибка удаления записи: " . $linkBase->error;
             }
+        } else {
+            echo "Ошибка выполнения запроса: " . $linkBase->error;
         }
     }
-
-?>
+}
