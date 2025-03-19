@@ -17,7 +17,7 @@ require_once('link.php');
         $login = $_REQUEST['login'];
         $pass = $_REQUEST['password'];
         $query = "SELECT * FROM users";
-        $result = $link->query($query);
+        $result = $linkBase->query($query);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if ($login === $row['login'] && $pass === $row['password']) { ?>
@@ -32,7 +32,7 @@ require_once('link.php');
                             <?php
 
                             $query = "SELECT * FROM menu ";
-                            $result = $link->query($query);
+                            $result = $linkBase->query($query);
                             if ($result->num_rows > 0) {
                                 echo '<ul class="navbar-nav">';
                                 while ($row = $result->fetch_assoc()) {
@@ -41,7 +41,7 @@ require_once('link.php');
             </li>';
                                 }
                             }
-                            $link->close();
+                            $linkBase->close();
 
                             ?>
                             <li class="nav-link mx-3">
@@ -68,7 +68,7 @@ require_once('link.php');
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <?php
                     $query = "SELECT * FROM menu ORDER BY sort_order ASC";
-                    $result = $link->query($query);
+                    $result = $linkBase->query($query);
                     if ($result->num_rows > 0) {
                         echo '<ul class="navbar-nav">';
                         while ($row = $result->fetch_assoc()) {
@@ -77,7 +77,7 @@ require_once('link.php');
                           </li>';
                         }
                     }
-                    $link->close();
+                    $linkBase->close();
 
                     ?>
                     <li class="nav-link">
@@ -112,7 +112,7 @@ require_once('link.php');
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <!-- You can add footer buttons or links here if needed -->
+                    
                 </div>
             </div>
         </div>

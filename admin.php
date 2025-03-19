@@ -69,7 +69,7 @@ require_once('link.php');
                 <?php
                 require_once('link.php');
                 $query_get = "SELECT * FROM menu ORDER BY sort_order ASC";
-                $result_get = $link->query($query_get);
+                $result_get = $linkBase->query($query_get);
 
                 $menuItems = []; 
 
@@ -107,7 +107,7 @@ require_once('link.php');
                     </div>
                 <?php
                 }
-                $link->close();
+                $linkBase->close();
                 ?>
             </div>
             <input type="hidden" name="reordered_ids" id="reordered_ids" value="">
