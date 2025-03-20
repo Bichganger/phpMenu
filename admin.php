@@ -68,10 +68,10 @@ require_once('link.php');
             <div id="menu-items">
                 <?php
                 require_once('link.php');
-                $query_get = "SELECT * FROM menu ORDER BY sort_order ASC";
+                $query_get = "SELECT * FROM `menu` ORDER by `sort_order` ASC";
                 $result_get = $linkBase->query($query_get);
 
-                $menuItems = []; 
+                $menuItems = [];
 
                 while ($row = $result_get->fetch_assoc()) {
                     $menuItems[] = $row;
@@ -140,6 +140,11 @@ require_once('link.php');
     </style>
 
     <script>
+        function activateButton() {
+            document.getElementById('saveButton').disabled = false;
+        }
+    
+
         document.addEventListener('DOMContentLoaded', function() {
             const menuItemsContainer = document.getElementById('menu-items');
             const menuItems = document.querySelectorAll('.menu-item');
@@ -200,9 +205,7 @@ require_once('link.php');
                 reorderedIdsInput.value = orderedIds;
             }
 
-            function activateButton() {
-                document.getElementById('saveButton').disabled = false;
-            }
+
 
             updateOrderInput(); // Initial call to set the order on page load
         });
