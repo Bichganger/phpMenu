@@ -82,6 +82,10 @@ require_once('link.php');
                     ?>
                     <li class="nav-link">
                         <a class="nav-link" id="login" data-bs-toggle="modal" data-bs-target="#modal" href="#">Войти</a> <!-- Updated this line -->
+                        
+                    </li>
+                    <li class="nav-link">
+                    <a class="nav-link" href="../index.php">Выйти</a>
                     </li>
                     </ul>
                 </div>
@@ -102,11 +106,11 @@ require_once('link.php');
                     <form action="" method="POST">
                         <div class="mb-3">
                             <label for="login" class="form-label">Логин</label>
-                            <input type="text" class="form-control" id="login" name="login" required>
+                            <input type="text" class="form-control" id="login" name="login" value="admin" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Пароль</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control" id="password" name="password" value="123" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Войти</button>
                     </form>

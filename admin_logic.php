@@ -1,19 +1,20 @@
 <?php 
 require_once('link.php');
-
+$dir = 'list/';
 if(!empty($_POST['title'])&&!empty($_POST['link'])){
     $title=$_POST['title'];
     $link=$_POST['link'];
 
     $filename=pathinfo($link,PATHINFO_FILENAME);
     $filename=strtolower(str_replace(' ','_',$filename)).'.php';
+    $filename= $dir . $filename;
     $filecontent="<?php\n
-    require_once('link.php');\n
-    require_once('header.php');\n
+    require_once('../link.php');\n
+    require_once('../header.php');\n
 ?>\n
 <h1>".$title."</h1>\n
 <?php\n
-require_once('footer.php');
+require_once('../footer.php');
 ?>";
 file_put_contents($filename,$filecontent);
 
@@ -55,9 +56,9 @@ if(isset($_POST['deleteButton'])){
 
 if(isset($_POST['saveButton'])){
     $query_update="SELECT * FROM menu";
-    $resulr_update=$linkBase->query($query_update);
+    $result_update=$linkBase->query($query_update);
 
-    while($row=$resulr_update->fetch_assoc()){
+    while($row=$result_update->fetch_assoc()){
         $id=$row['id'];
         $title_get=$row['title'];
         $link_get=$row['link'];
@@ -65,17 +66,30 @@ if(isset($_POST['saveButton'])){
             $title_ins=$_POST['title_get'][$id];
             $link_ins=$_POST['link_get'][$id];
 
-            if($title_get!=$title_ins || $link_get!=$link_ins){
-                $new_filename=strtolower(str_replace(' ','_',$title_ins)).'.php';
+            if($title_get!=$title_ins || $link_get!=$link_ins){ 
                 $old_filename=strtolower(str_replace(' ','_',$title_get)).'.php';
+                $title_ins=pathinfo($title_ins,PATHINFO_FILENAME);
+               $new_filename=strtolower(str_replace(' ','_',$title_ins)).'.php';
+                
+               
+                $old_filename=strtolower(str_replace(' ','_',$link_get)).'.php';
+                $link_ins=pathinfo($link_ins,PATHINFO_FILENAME); 
+                $new_filename=strtolower(str_replace(' ','_',$link_ins)).'.php';
                 if(file_exists($old_filename)){
                     rename($old_filename,$new_filename);
                 }
-                $filecontent="<?php\n// Файл:$new_filename\nheader('Location:$link_ins');\n?>";
+                $new_filename=$dir . $new_filename;
+                $filecontent = "
+                <?php\n
+                require_once('../link.php');
+                require_once('../header.php');
+                echo '$new_filename';\n
+                require_once('../footer.php');
+                ?>"; 
                 file_put_contents($new_filename,$filecontent);
 
                 $stmt=$linkBase->prepare("UPDATE `menu` SET `title` = ?, `link`=? WHERE id=?");
-                $stmt->bind_param("ssi", $title_ins,$link_ins,$id);
+                $stmt->bind_param("ssi", $title_ins,$new_filename,$id);
                 if($stmt->execute()){
                 header('Location: admin.php');
                 }
